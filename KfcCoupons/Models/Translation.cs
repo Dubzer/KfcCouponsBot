@@ -14,6 +14,6 @@ namespace KfcCoupons.Models
         public string Description { get; set; }
 
         [JsonProperty("short")]
-        public uint Short { get; set; }
+        public string Short { get; set; }
     }
 }
