@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Telegram.Bot;
 
 namespace KfcCoupons
 {
@@ -25,6 +27,10 @@ namespace KfcCoupons
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string botToken = Configuration.GetValue<string>("telegram:botToken");
+            
+            services.AddSingleton(new TelegramBotClient(botToken));
+            
             services.AddControllers();
         }
 
@@ -35,8 +41,8 @@ namespace KfcCoupons
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseHttpsRedirection();
+            
+            app.UseSerilogRequestLogging();
 
             app.UseRouting();
 
