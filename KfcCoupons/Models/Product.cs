@@ -12,7 +12,7 @@ namespace KfcCoupons.Models
         public long Price => _price.Amount;
         
         [JsonProperty("oldPrice")]
-        public long OldPrice { get; set; }
+        public long? OldPrice { get; set; }
         
         // TODO: Convert to enum
         [JsonProperty("type")]
@@ -21,7 +21,7 @@ namespace KfcCoupons.Models
         [JsonProperty("translation")]
         private Translation Translation { get; set; }
         public string Description => Translation.Ru.Description;
-        public uint Coupon => Translation.Ru.Short;
+        public string Coupon => Translation.Ru.Short;
         
         // TODO: Media
         //[JsonProperty("media")]
