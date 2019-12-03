@@ -13,8 +13,4 @@
       <PackageReference Include="Telegram.Bot" Version="15.1.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
 </Project>
