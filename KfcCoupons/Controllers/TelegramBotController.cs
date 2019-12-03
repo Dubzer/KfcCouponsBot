@@ -10,6 +10,5 @@ namespace KfcCoupons.Controllers
         {
             return Ok();
         }
-
     }
 }

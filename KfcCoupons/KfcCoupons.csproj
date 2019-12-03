@@ -13,4 +13,13 @@
       <PackageReference Include="Telegram.Bot" Version="15.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="launchSettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
