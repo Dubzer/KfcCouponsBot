@@ -9,10 +9,11 @@ namespace KfcCoupons.Models
 
         [JsonProperty("price")]
         private Price _price;
-        public long Price => _price.Amount;
-        
+        public double Price => _price.Amount * 0.01;
+
         [JsonProperty("oldPrice")]
-        public long? OldPrice { get; set; }
+        public long? _oldPrice;
+        public double? OldPrice => _oldPrice * 0.01;
         
         [JsonProperty("translation")]
         private Translation Translation { get; set; }
