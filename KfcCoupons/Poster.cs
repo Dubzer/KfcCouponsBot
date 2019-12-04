@@ -1,6 +1,8 @@
-﻿using KfcCoupons.Models;
+﻿using System;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.InputFiles;
 
 namespace KfcCoupons
 {
@@ -9,13 +11,12 @@ namespace KfcCoupons
         private readonly ChatId _chatId;
         private readonly TelegramBotClient _client;
 
-        public Poster(TelegramBotClient client, ChatId chatId) =>
+        public Poster(TelegramBotClient client,ChatId chatId) =>
             (_client, _chatId) = (client, chatId);
 
-        public void Post(Product product)
+        public async Task Post(string description, Uri thumbnail)
         {
-            string text = $"{product.Description}\n\nКупон: `{product.Coupon}`\nНовая цена: {product.Price}\nДешевле на: {product.OldPrice - product.Price}";
-            _client.SendTextMessageAsync(_chatId, text);
+            await _client.SendPhotoAsync(_chatId, new InputOnlineFile(thumbnail), description);
         }
     }
 }
