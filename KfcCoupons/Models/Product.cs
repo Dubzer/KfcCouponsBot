@@ -22,14 +22,8 @@ namespace KfcCoupons.Models
         [JsonProperty("media")]
         private Media _media;
         public string Thumbnail => _media.Image;
-
-        /*
-         Maybe use it later to create menu like:
-         Combo: 
-         1. 3 Strips original / 3 Strips hot
-         2. Cheese sauce
+        
         [JsonProperty("modifierGroups")]
         public ModifierGroup[] ModifierGroups { get; set; }
-        */
     }
 }
