@@ -1,14 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+﻿using System;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Events;
+using Telegram.Bot;
 
 namespace KfcCoupons
 {
@@ -18,25 +10,13 @@ namespace KfcCoupons
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
             .AddJsonFile("appsettings.json", false)
             .Build();
-        
-        public static void Main(string[] args)
+
+        private static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                .CreateLogger();
-
-            CreateHostBuilder(args).Build().Run();
+            var telegramClient = new TelegramBotClient(Configuration.GetValue<string>("telegram:botToken"));
+            var descriptionGenerator = new DescriptionGenerator();
+            var poster = new Poster(telegramClient, Configuration.GetValue<string>("kfccoupons:chatid"));
+            var kfcClient = new KfcClient();
         }
-
-        private static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                    webBuilder.UseKestrel((context, options) =>
-                        options.Configure(context.Configuration.GetSection("Kestrel")));
-                })
-                .UseSerilog();
     }
 }
