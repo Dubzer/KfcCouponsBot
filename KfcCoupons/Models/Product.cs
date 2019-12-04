@@ -14,18 +14,14 @@ namespace KfcCoupons.Models
         [JsonProperty("oldPrice")]
         public long? OldPrice { get; set; }
         
-        // TODO: Convert to enum
-        [JsonProperty("type")]
-        public string Type { get; set; }
-        
         [JsonProperty("translation")]
         private Translation Translation { get; set; }
         public string Description => Translation.Ru.Description;
         public string Coupon => Translation.Ru.Short;
         
-        // TODO: Media
-        //[JsonProperty("media")]
-        //public Media Media { get; set; }
+        [JsonProperty("media")]
+        private Media _media;
+        public string Thumbnail => _media.Image;
 
         /*
          Maybe use it later to create menu like:
