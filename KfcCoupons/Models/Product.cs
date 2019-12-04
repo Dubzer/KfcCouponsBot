@@ -12,7 +12,7 @@ namespace KfcCoupons.Models
         public double Price => _price.Amount * 0.01;
 
         [JsonProperty("oldPrice")]
-        public long? _oldPrice;
+        private long? _oldPrice;
         public double? OldPrice => _oldPrice * 0.01;
         
         [JsonProperty("translation")]
