@@ -8,15 +8,16 @@ namespace KfcCoupons
 {
     public class Poster
     {
-        private readonly ChatId _chatId;
         private readonly TelegramBotClient _client;
+        private readonly ChatId _chatId;
 
         public Poster(TelegramBotClient client,ChatId chatId) =>
             (_client, _chatId) = (client, chatId);
 
-        public async Task Post(string description, Uri thumbnail)
+        public async Task<int> Post(string description, Uri thumbnail)
         {
-            await _client.SendPhotoAsync(_chatId, new InputOnlineFile(thumbnail), description);
+            var resultMessage = await _client.SendPhotoAsync(_chatId, new InputOnlineFile(thumbnail), description);
+            return resultMessage.MessageId;
         }
     }
 }
