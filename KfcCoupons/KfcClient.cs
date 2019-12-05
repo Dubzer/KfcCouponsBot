@@ -25,13 +25,14 @@ namespace KfcCoupons
 
             return JsonConvert.DeserializeObject<MenuData>(content);
         }
-        public async Task<IEnumerable<Product>> GetProductsWithCoupon()
+        
+        /// <returns>Products and hash code of result</returns>
+        public async Task<(IEnumerable<Product> products, string hash)> GetProductsWithCoupon()
         {
             MenuData menuData = await GetMenuData();
 
-            return menuData.Value.Products.Where(pair => menuData.Value.Categories.Coupons[0].Products.Contains(pair.Value.Id))
-                .Select(x => x.Value);
+            return (menuData.Value.Products.Where(pair => menuData.Value.Categories.Coupons[0].Products.Contains(pair.Value.Id))
+                .Select(x => x.Value), menuData.Value.HashCode);
         }
-
     }
 }
