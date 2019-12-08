@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace KfcCoupons.Models
 {
@@ -8,21 +9,21 @@ namespace KfcCoupons.Models
         private ExternalIdentifiers _identifiers;
 
         [JsonProperty("media")]
-        private Media _media;
+        private Dictionary<string, string> _media;
 
         [JsonProperty("oldPrice")]
         private long? _oldPrice;
 
         [JsonProperty("price")]
-        private Price _price;
+        private Dictionary<string, string> _price;
 
         [JsonProperty("productId")]
         public long Id { get; set; }
 
-        public double Price => _price.Amount * 0.01;
+        public double Price => long.Parse(_price["amount"]) * 0.01;
         public double? OldPrice => _oldPrice * 0.01;
         public uint Coupon => _identifiers.RkeeperCode;
-        public string Thumbnail => _media.Image;
+        public string Thumbnail => _media["image"];
 
         [JsonProperty("modifierGroups")]
         public ModifierGroup[] ModifierGroups { get; set; }

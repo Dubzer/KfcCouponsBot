@@ -13,12 +13,9 @@ namespace KfcCoupons
         private const string MenuEndpoint = "menu/74020442/website/finger_lickin_good";
         private readonly HttpClient _httpClient;
 
-        public KfcClient()
-        {
-            _httpClient = new HttpClient {BaseAddress = new Uri("https://api.kfc.com/api/menu/api/v1/")};
-        }
+        public KfcClient() => _httpClient = new HttpClient {BaseAddress = new Uri("https://api.kfc.com/api/menu/api/v1/")};
 
-        public async Task<MenuData> GetMenuData()
+        private async Task<MenuData> GetMenuData()
         {
             HttpResponseMessage responseMessage = await _httpClient.GetAsync(MenuEndpoint);
             string content = await responseMessage.Content.ReadAsStringAsync();

@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace KfcCoupons.Models
 {
     public class Modifier
     {
         [JsonProperty("title")]
-        public Title Title { get; set; }
+        private Dictionary<string, string> _title;
+
+        public string Title => _title["ru"];
     }
 }

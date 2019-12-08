@@ -12,10 +12,7 @@ namespace KfcCoupons
         private readonly ChatId _chatId;
         private readonly TelegramBotClient _client;
 
-        public Poster(TelegramBotClient client, ChatId chatId)
-        {
-            (_client, _chatId) = (client, chatId);
-        }
+        public Poster(TelegramBotClient client, ChatId chatId) => (_client, _chatId) = (client, chatId);
 
         public async Task<int> Post(string description, Uri thumbnail)
         {
