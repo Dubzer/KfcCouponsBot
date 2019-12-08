@@ -16,9 +16,7 @@ namespace KfcCoupons
                 // Using detailed title if there aren't many elements here,
                 // or generic title for a large number of elements
                 string modifierString = modifiersLength < 3
-                    ? string.Join('/',
-                        group.Modifiers.Select((modifier, i) =>
-                            $@"{modifier.Title.Ru}{(i + 1 != modifiersLength ? "/" : null)}"))
+                    ? string.Join('/', group.Modifiers.Select(modifier => $@"{modifier.Title}"))
                     : group.Title;
 
                 modifiersTitles.Add(modifierString);
