@@ -17,15 +17,23 @@ namespace KfcCoupons
                 string modifierString = null;
                 int modifiersLength = group.Modifiers.Length;
 
-                for (int i = 0; i < modifiersLength; i++)
+                if (modifiersLength < 3)
                 {
-                    modifierString += $@"{group.Modifiers[i].Title.Ru}{(i + 1 != modifiersLength ? "/" : null)}";
-                }
+                    for (int i = 0; i < modifiersLength; i++)
+                    {
+                        modifierString += $@"{group.Modifiers[i].Title.Ru}{(i + 1 != modifiersLength ? "/" : null)}";
+                    }
 
-                modifiersTitles.Add(modifierString);
+                    modifiersTitles.Add(modifierString);
+                }
+                else
+                {
+                    modifiersTitles.Add(group.Title);
+                }
+                
             }
 
-            return $"*Комбо за {product.Price}₽* (ранее {product.OldPrice}₽)\n{string.Join("\n", modifiersTitles.Select((title, i) => $"{i + 1}. {title}"))}\n\n*Купон:* `{product.Coupon}`";
+            return $"*Комбо за {product.Price}₽* (ранее {product.OldPrice}₽)\n{string.Join("\n", modifiersTitles.Select((title, i) => $"*{i + 1}*. {title}"))}\n\n*Купон:* `{product.Coupon}`";
         }
     }
 }
