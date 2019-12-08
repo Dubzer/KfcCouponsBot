@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using KfcCoupons.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Telegram.Bot;
-using File = System.IO.File;
 
 namespace KfcCoupons
 {
@@ -17,7 +17,7 @@ namespace KfcCoupons
             .AddJsonFile("appsettings.json", false)
             .Build();
 
-        private static async Task Main(string[] args)
+        private static async Task Main()
         {
             var chatId = Configuration.GetValue<dynamic>("kfccoupons:chatid");
             var telegramClient = new TelegramBotClient(Configuration.GetValue<string>("telegram:botToken"));
@@ -30,23 +30,23 @@ namespace KfcCoupons
             var postedProducts = new List<PostedProduct>();
 
             bool firstLaunch = !File.Exists("hash.txt") && !File.Exists("products.json");
-            
+
             if (!firstLaunch)
             {
                 string oldHash = File.ReadAllText("hash.txt");
                 if (oldHash == newHash)
                     Environment.Exit(0);
-                
+
                 string oldProductsText = await File.ReadAllTextAsync("products.json");
                 oldProcuts = JsonConvert.DeserializeObject<PostedProduct[]>(oldProductsText);
-                
-                foreach (var oldProduct in oldProcuts.Where(p => newProducts.All(x => x.Id != p.Id)))
-                {
+
+                foreach (PostedProduct oldProduct in oldProcuts.Where(p => newProducts.All(x => x.Id != p.Id)))
                     await telegramClient.DeleteMessageAsync(chatId, oldProduct.MessageId);
-                }
             }
-            
-            foreach (var newProduct in firstLaunch ? newProducts : newProducts.Where(p => oldProcuts.All(x => x.Id != p.Id)))
+
+            foreach (Product newProduct in firstLaunch
+                ? newProducts
+                : newProducts.Where(p => oldProcuts.All(x => x.Id != p.Id)))
             {
                 int messageId = await poster.Post(descriptionGenerator.Generate(newProduct), new Uri($"https://s82079.cdn.ngenix.net/{newProduct.Thumbnail}?dw=250"));
                 postedProducts.Add(new PostedProduct(newProduct.Id, messageId));

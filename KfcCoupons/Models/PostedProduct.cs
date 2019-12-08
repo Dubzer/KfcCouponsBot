@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using Telegram.Bot.Types;
-
-namespace KfcCoupons.Models
+﻿namespace KfcCoupons.Models
 {
     public class PostedProduct
     {
