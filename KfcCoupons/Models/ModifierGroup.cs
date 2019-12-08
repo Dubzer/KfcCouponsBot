@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace KfcCoupons.Models
 {
@@ -6,5 +7,9 @@ namespace KfcCoupons.Models
     {
         [JsonProperty("modifiers")]
         public Modifier[] Modifiers { get; set; }
+
+        [JsonProperty("title")]
+        private Dictionary<string, string> _title;
+        public string Title => _title["ru"];
     }
 }
