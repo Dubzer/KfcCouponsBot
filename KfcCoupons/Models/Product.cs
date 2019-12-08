@@ -15,10 +15,9 @@ namespace KfcCoupons.Models
         private long? _oldPrice;
         public double? OldPrice => _oldPrice * 0.01;
         
-        [JsonProperty("translation")]
-        private Translation Translation { get; set; }
-        public string Description => Translation.Ru.Description;
-        public string Coupon => Translation.Ru.Short;
+        [JsonProperty(PropertyName = "externalIdentifiers")]
+        private ExternalIdentifiers _identifiers;
+        public uint Coupon => _identifiers.RkeeperCode;
         
         [JsonProperty("media")]
         private Media _media;
