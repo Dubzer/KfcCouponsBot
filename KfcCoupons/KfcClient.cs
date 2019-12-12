@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using KfcCoupons.Models;
-using Newtonsoft.Json;
 
 namespace KfcCoupons
 {
@@ -20,7 +20,7 @@ namespace KfcCoupons
             HttpResponseMessage responseMessage = await _httpClient.GetAsync(MenuEndpoint);
             string content = await responseMessage.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<MenuData>(content);
+            return JsonSerializer.Deserialize<MenuData>(content);
         }
 
         /// <returns>Products and hash code of result</returns>

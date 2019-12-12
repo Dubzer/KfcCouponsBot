@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Serilog;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

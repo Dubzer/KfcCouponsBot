@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using KfcCoupons.Models;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Serilog;
 using Telegram.Bot;
 
@@ -17,24 +17,23 @@ namespace KfcCoupons
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
             .AddJsonFile("appsettings.json", false)
             .Build();
-        
+
         private static async Task Main()
         {
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration, "Serilog")
                 .CreateLogger();
 
-            // We use a dynamic type because user can enter an integer(for id) or a string(for nickname) value 
-            var chatId = Configuration.GetValue<dynamic>("kfccoupons:chatid");
-            var telegramClient = new TelegramBotClient(Configuration.GetValue<string>("telegram:botToken"));
-            var descriptionGenerator = new DescriptionGenerator();
-            var poster = new Poster(telegramClient, chatId);
             var kfcClient = new KfcClient();
+            var chatId = Configuration.GetValue<dynamic>("KfcCoupons:ChatId");
+
+            (IEnumerable<Product> newProducts, string newHash) = await kfcClient.GetProductsWithCoupon();
 
             PostedProduct[] oldProducts = null;
-            (IEnumerable<Product> newProducts, string newHash) = await kfcClient.GetProductsWithCoupon();
+
             var postedProducts = new List<PostedProduct>();
             bool firstLaunch = !File.Exists("hash.txt") && !File.Exists("products.json");
+            var telegramClient = new TelegramBotClient(Configuration.GetValue<string>("telegram:botToken"));
 
             if (!firstLaunch)
             {
@@ -47,7 +46,7 @@ namespace KfcCoupons
                 }
 
                 string oldProductsText = await File.ReadAllTextAsync("products.json");
-                oldProducts = JsonConvert.DeserializeObject<PostedProduct[]>(oldProductsText);
+                oldProducts = JsonSerializer.Deserialize<PostedProduct[]>(oldProductsText);
 
                 foreach (PostedProduct oldProduct in oldProducts.Where(p => newProducts.All(x => x.Id != p.Id)))
                 {
@@ -55,6 +54,9 @@ namespace KfcCoupons
                     await telegramClient.DeleteMessageAsync(chatId, oldProduct.MessageId);
                 }
             }
+
+            var descriptionGenerator = new DescriptionGenerator();
+            var poster = new Poster(telegramClient, chatId);
 
             foreach (Product newProduct in firstLaunch
                 ? newProducts
@@ -65,10 +67,10 @@ namespace KfcCoupons
                     new Uri($"https://s82079.cdn.ngenix.net/{newProduct.Thumbnail}?dw=250"));
                 postedProducts.Add(new PostedProduct(newProduct.Id, messageId));
             }
-            
-            Log.Information($"Writing files...");
+
+            Log.Information("Writing files...");
             await File.WriteAllTextAsync("hash.txt", newHash);
-            await File.WriteAllTextAsync("products.json", JsonConvert.SerializeObject(postedProducts));
+            await File.WriteAllTextAsync("products.json", JsonSerializer.Serialize(postedProducts));
         }
     }
 }
