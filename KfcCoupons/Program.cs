@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using KfcCoupons.Models;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Serilog;
 using Telegram.Bot;
 
@@ -25,13 +25,11 @@ namespace KfcCoupons
                 .CreateLogger();
 
             var kfcClient = new KfcClient();
-            var chatId = Configuration.GetValue<dynamic>("KfcCoupons:ChatId");
-
             (IEnumerable<Product> newProducts, string newHash) = await kfcClient.GetProductsWithCoupon();
 
+            // We use a dynamic type because user can enter an integer(for id) or a string(for nickname) value 
+            var chatId = Configuration.GetValue<dynamic>("kfccoupons:chatid");
             PostedProduct[] oldProducts = null;
-
-            var postedProducts = new List<PostedProduct>();
             bool firstLaunch = !File.Exists("hash.txt") && !File.Exists("products.json");
             var telegramClient = new TelegramBotClient(Configuration.GetValue<string>("telegram:botToken"));
 
@@ -46,7 +44,7 @@ namespace KfcCoupons
                 }
 
                 string oldProductsText = await File.ReadAllTextAsync("products.json");
-                oldProducts = JsonSerializer.Deserialize<PostedProduct[]>(oldProductsText);
+                oldProducts = JsonConvert.DeserializeObject<PostedProduct[]>(oldProductsText);
 
                 foreach (PostedProduct oldProduct in oldProducts.Where(p => newProducts.All(x => x.Id != p.Id)))
                 {
@@ -58,6 +56,7 @@ namespace KfcCoupons
             var descriptionGenerator = new DescriptionGenerator();
             var poster = new Poster(telegramClient, chatId);
 
+            var postedProducts = new List<PostedProduct>();
             foreach (Product newProduct in firstLaunch
                 ? newProducts
                 : newProducts.Where(p => oldProducts.All(x => x.Id != p.Id)))
@@ -70,7 +69,7 @@ namespace KfcCoupons
 
             Log.Information("Writing files...");
             await File.WriteAllTextAsync("hash.txt", newHash);
-            await File.WriteAllTextAsync("products.json", JsonSerializer.Serialize(postedProducts));
+            await File.WriteAllTextAsync("products.json", JsonConvert.SerializeObject(postedProducts));
         }
     }
 }
