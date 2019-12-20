@@ -35,16 +35,22 @@ namespace KfcCoupons
 
             if (!firstLaunch)
             {
-                Log.Information("hash.txt and products.json are exists");
+                Log.Information("hash.txt and products.json are exist");
                 string oldHash = File.ReadAllText("hash.txt");
                 if (oldHash == newHash)
                 {
-                    Log.Information("New hash is the same as in file. Returning");
+                    Log.Information("New hash is the same as in file. Returning...");
                     return;
                 }
 
                 string oldProductsText = await File.ReadAllTextAsync("products.json");
                 oldProducts = JsonConvert.DeserializeObject<PostedProduct[]>(oldProductsText);
+
+                if (newProducts.Select(nP => nP.Id).SequenceEqual(oldProducts.Select(oP => oP.Id)))
+                {
+                    Log.Information("Products are the same. Returning...");
+                    return;
+                }
 
                 foreach (PostedProduct oldProduct in oldProducts.Where(p => newProducts.All(x => x.Id != p.Id)))
                 {
@@ -65,7 +71,7 @@ namespace KfcCoupons
                 int messageId = await poster.Post(descriptionGenerator.Generate(newProduct),
                     new Uri($"https://s82079.cdn.ngenix.net/{newProduct.Thumbnail}?dw=250"));
                 postedProducts.Add(new PostedProduct(newProduct.Id, messageId));
-            }
+            }    
 
             Log.Information("Writing files...");
             await File.WriteAllTextAsync("hash.txt", newHash);
